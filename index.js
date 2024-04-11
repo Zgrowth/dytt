@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const AV = require('leancloud-storage');
 
 const typeText = '喜剧';
-const limit = 20;
+const limit = process.env.limit || 20;
 const isDebugger = false;
 
 // 初始化 LeanCloud 应用
@@ -109,8 +109,22 @@ async function getCurPageMovie({ page, browser, itemsDetails }) {
       // 3. 导航到链接指向的地址
       await newItemPage.goto(href, { waitUntil: 'networkidle2' });
       await sleep(2000);
+       // 获取页面 HTML 内容
+      const pageContent = await newItemPage.content();
+      console.log('🍉🍉🍉🍉🍉🍉🍉🍉3.1 pageContent:', pageContent);
       // 4. 提取所需信息
-      const itemDetails = await newItemPage.evaluate(getMovieDetailInfo);
+      const itemDetails = await newItemPage.evaluate(() => {
+        const result = {};
+        const textArr = document.querySelector('#Zoom').innerText.replace(/\n/g, '').split('◎');
+        textArr.forEach(item => {
+          if (item) {
+            const fieldText = item.substr(0, 4);
+            result[fieldText] = item.replace(fieldText, '');
+          }
+        });
+        result.magnet = document.querySelector('#Zoom a').href;
+        return result;
+      });
       itemsDetails.push({
         ...itemDetails,
         title,
@@ -124,7 +138,7 @@ async function getCurPageMovie({ page, browser, itemsDetails }) {
 }
 
 // 获取指定电影页面的详细信息字段
-function getMovieDetailInfo() {
+function () {
   const result = {};
   try {
     const textArr = document.querySelector('#Zoom').innerText.replace(/\n/g, '').split('◎');
