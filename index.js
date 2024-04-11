@@ -55,7 +55,7 @@ const start = () => {
           usePage.close();
           console.log('🍉🍉🍉🍉🍉🍉🍉🍉4 curHref:', curHref);
           await newItemPage.goto(curHref, { waitUntil: 'networkidle2' });
-          await newItemPage.waitForSelector('#header ul table');
+          await sleep(2000);
           await getCurPageMovie({
             page: newItemPage,
             browser,
@@ -108,6 +108,7 @@ async function getCurPageMovie({ page, browser, itemsDetails }) {
       const newItemPage = await browser.newPage();
       // 3. 导航到链接指向的地址
       await newItemPage.goto(href, { waitUntil: 'networkidle2' });
+      await sleep(2000);
       // 4. 提取所需信息
       const itemDetails = await newItemPage.evaluate(getMovieDetailInfo);
       itemsDetails.push({
@@ -125,15 +126,27 @@ async function getCurPageMovie({ page, browser, itemsDetails }) {
 // 获取指定电影页面的详细信息字段
 function getMovieDetailInfo() {
   const result = {};
-  const textArr = document.querySelector('#Zoom').innerText.replace(/\n/g, '').split('◎');
-  textArr.forEach(item => {
-    if (item) {
-      const fieldText = item.substr(0, 4);
-      result[fieldText] = item.replace(fieldText, '');
-    }
-  });
-  result.magnet = document.querySelector('#Zoom a').href;
+  try {
+    const textArr = document.querySelector('#Zoom').innerText.replace(/\n/g, '').split('◎');
+    textArr.forEach(item => {
+      if (item) {
+        const fieldText = item.substr(0, 4);
+        result[fieldText] = item.replace(fieldText, '');
+      }
+    });
+    result.magnet = document.querySelector('#Zoom a').href;
+  } catch(err) {
+    console.log('getMovieDetailInfo error:', err, document.querySelector('#Zoom'));
+  }
   return result;
+}
+
+function sleep(timeout) {
+  return new Promise((resolve,reject) => {
+    setTimeout(() => {
+      resolve();
+    }, timeout);
+  })
 }
 
 function getCurrentDateFormatted() {
