@@ -7,8 +7,8 @@ const isDebugger = false;
 
 // 初始化 LeanCloud 应用
 AV.init({
-  appId: "f2b0Nh5pSJzstBiy3p0iajM2-gzGzoHsz", // 替换为你的 App ID
-  appKey: "MY0v9ZfgAOf5VZGgBP4eiG6e", // 替换为你的 App Key
+  appId: process.env.appId, // 替换为你的 App ID
+  appKey: process.env.appKey, // 替换为你的 App Key
   serverURL: "https://cn-n1-console-api.leancloud.cn", // 替换为你的 Server URL
 });
 
