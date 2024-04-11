@@ -138,7 +138,7 @@ async function getCurPageMovie({ page, browser, itemsDetails }) {
 }
 
 // 获取指定电影页面的详细信息字段
-function () {
+function getMovieDetailInfo() {
   const result = {};
   try {
     const textArr = document.querySelector('#Zoom').innerText.replace(/\n/g, '').split('◎');
