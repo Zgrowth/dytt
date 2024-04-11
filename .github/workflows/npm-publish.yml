@@ -32,3 +32,4 @@ jobs:
       env:
           appId: ${{ secrets.APPID }}
           appKey: ${{ secrets.APPKEY }}
+          limit: 1
